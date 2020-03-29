@@ -1,3 +1,12 @@
+
+
+- [Motivation](#motivation)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Simple use case](#simple-use-case)
+  - [All in one complex option](#all-in-one-complex-option)
+  - [Group by Group appending complex option](#group-by-group-appending-complex-option)
+
 # Motivation 
 
 The idea of the package is to provide a very simple workflow for updating TeX
@@ -15,7 +24,7 @@ better managed directly in the LaTeX project itself.
 With this in mind, the idea of this package is to export only the table body to
 a **.tex** file and this file should be included within the table in the LaTeX
 project. So, as soon as the **.tex** file is updated (or uploaded to overleaf.
-By the way, if you don't have an accound on
+By the way, if you don't have an account on
 [overleaf](https://www.overleaf.com), go there and make one, I'll wait here...)
 Where were we? Tables... yes... as soon as they are updated, the LaTeX project
 will be compiled with the new information, no need to manually touch the
@@ -23,7 +32,7 @@ will be compiled with the new information, no need to manually touch the
 the date of creation. The user can also pass some further comments to be added
 (but invisible in the compiled PDF) to the table, because since the table is
 stripped from its surrounding, a nice comment (better would be a nice name, but
-naming this are hard) can be helpful not to link the wrong table in the right
+naming things are hard) can be helpful not to link the wrong table in the right
 place, or the right table in the wrong place or the wrong table in the wrong
 place... 
 
@@ -77,8 +86,7 @@ sysuse auto
 * set dp comma // could (should?) be dealt with from latex, but can be done here
 tabstat price weight mpg rep78, by(foreign) stat(mean sd min max) nototal long save
 mat mat_to_export = r(Stat1) \ r(Stat2)
-tempfile exporter_file
-mat2tex using `exporter_file'.tex, matrix(mat_to_export) replace /// 
+mat2tex using table_example.tex, matrix(mat_to_export) replace /// 
     comm(data from auto dataset) format(%9.2fc)
 ```
 this will output a tex file like so : 
@@ -112,13 +120,12 @@ or try one of the more complex possibilities
 
 ## All in one complex option 
 
-```clojure
+```stata
 sysuse auto
 * set dp comma // could (should?) be dealt with from latex, but can be done here
 tabstat price weight mpg rep78, by(foreign) stat(mean sd min max) nototal long save
 mat mat_to_export = r(Stat1) \ r(Stat2)
-tempfile exporter_file
-mat2tex using `exporter_file', matrix(mat_to_export) replace comm(data from auto dataset) ///
+mat2tex using table_example, matrix(mat_to_export) replace comm(data from auto dataset) ///
     format(%9.0fc %9.1fc %5.3fc %5.3fc) rownames(/// 
     "\rowgroupit{Domestic} \\ mean"              ///
     "sd"                                         ///
@@ -168,14 +175,16 @@ to put a `\hline`s at the end of the lines.
 The other option is to divide (or just not merge) stata's matrix into each 
 gropu and append each table accordingly. the grouptitle
 
-```clojure
+```stata
 mat group_1 = r(Stat1)
-local gt  "\rowgroupit{Domestic}\\"
-mat2tex using `exporter_file', matrix(group_1) replace  ///
+local gt  "\rowgroupit{Domestic}\\" // just to show that locals can be used too
+mat2tex using table_example, matrix(group_1) replace  ///
     format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(`gt')
 
 mat group_2 = r(Stat2)
-mat2tex using `exporter_file', matrix(group_2) append  notiming ///
+mat2tex using table_example, matrix(group_2) append  notiming ///
     format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(\rowgroupit{Foreign}\\)
 ```
 
+Another option would be create multiple sub-tables in separated files and merge
+them back together in the LaTeX project via multiple `\input{}`.
