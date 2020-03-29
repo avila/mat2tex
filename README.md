@@ -155,6 +155,9 @@ For that, you will need a table in latex such as the following.
     \end{tabular}%
 \end{table}%
 ```
+
+![Table with two groups](./assets/tab_two_groups.png)
+
 Pay attention to the `\begin{tabular}{ >{\qquad}l rr rr }` environment
 initialization. the `>{\qquad}l` part instructs the first column of the table 
 to be aligned left but with a `\qquad` spacing in each row. 
