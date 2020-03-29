@@ -1,5 +1,5 @@
-*! Date    : 14 Mar 2019
-*! Version : 2.08
+*! Date    : 29 Mar 2020
+*! Version : 0.0.42
 *! Author  : Marcelo Rainho Avila
 *! Email   : m dot rainho dot avila ɑt gmɑil.com
 *!   export a matrix as a latex table body 
@@ -7,14 +7,14 @@
 /* START HELP FILE
 title[a command to export a matrix as a latex table body.]
 
-desc[
- {cmd:mat2tex}  generates a latex table body from a stata matrix. 
- Please note that I am still trying to get the hang of stata's hell, I mean, help file system, 
- with the help of {cmd:makehlp}. In any case, I can not yet get, for example, the replace out of 
- over there under the main options, and also can not indicate properly the required and optional arguments, as in 
- other help files. More detailed usage and exaplanations will be found at 
- {browse github.com/avila/mat2tex}. Respect to stata's devs that write amazingly helpful help files _l⌒lo ! 
-]
+desc[{cmd:mat2tex}  generates a latex table body from a stata matrix. Please
+note that I am still trying to get the hang of stata's hell, I mean, help file
+system, with the help of {cmd:makehlp}. In any case, I can not yet get, for
+example, the replace out of over there under the main options, and also can not
+indicate properly the required and optional arguments, as in other help files.
+More detailed usage and exaplanations will be found at {browse
+github.com/avila/mat2tex}. Respect to stata's devs that write amazingly helpful
+help files _l⌒lo !]
 
 opt[matrix()   Matrix to be exported into tex (Required). ]
 
@@ -24,20 +24,35 @@ opt2[replace  Replaces existing filename (or writes a new, if inexistent.)]
 
 opt2[append  Appends table to existing filename.]
 
-opt2[notiming  Do not include date and time of table creation, which is included by default.]
+opt2[notiming  Do not include date and time of table creation, which is included
+by default.]
 
-opt2[comment()  Include additional comment that might be helpful to indentify the origin of table body.]
+opt2[comment()  Include additional comment that might be helpful to indentify
+the origin of table body.]
 
-opt2[format()  Format of each column of matrix (Default: "%10.0g").
-        If only one included it is applied to all columns, otherwise it is applied in a 1 by 1 manner.
-        See {stata help format} for more information on formating options. If less format arguments 
-        are passed than number of columns of matrix, I believe stata is crazy enough to cycle through the
-        rest of the columns matrix with last format given by the user ¯\_(ツ)_/¯.]
+opt2[format()  Format of each column of matrix (Default: "%12.0g").
+        If only one included it is applied to all columns, otherwise it is
+        applied in a 1 by 1 manner. See {stata help format} for more information
+        on formating options. If less format arguments are passed than number of
+        columns of matrix, I believe stata is crazy enough to cycle through the
+        rest of the columns matrix with last format given by the user
+        ¯\_(ツ)_/¯. 
+        {cmd:mat2tex} won't check mathing lengths in formating
+        arguments and matrix columns. The format options is not applied to the
+        rownames (first column) ]
 
 opt2[rownames()  Accepts quoted strings separated blank spaces. No comma between names!. 
-        It can be usefull to circunvent 32 chars maximum string lenght of stata's matrix rownames. Make
-        sure to match the number of rows of the matrix. Presently, colnames are not used here and should
-        be directly adapted in LaTeX's table headers.]
+        It can be usefull to circunvent 32 chars maximum string lenght of
+        stata's matrix rownames. Make sure to match the number of rows of the
+        matrix. Presently, colnames are not used here and should be directly
+        adapted in LaTeX's table headers.]
+
+opt2[grouptitle()  When appending sub-tables it might be useful. I have no idea 
+        when I should quote or not strings in stata, but here, strings should be
+        unquoted!. Note that the user has to add "\\" to tell LaTeX to break the
+        line. I could do it autmatically, but maybe the flexibility might be 
+        used in unexpected ways... 
+]
 
 opt2[quietly  Do not print output onto results window.]
 
@@ -52,6 +67,41 @@ example[
 
 
 For more detailed and examples, plase see {browse github.com/avila/mat2tex}
+]
+
+freetext[
+
+Example of latex table:
+
+\begin{table}
+
+\centering
+
+\caption{Example Table}
+
+\begin{tabular}{ >{\quad}l rr rr }
+
+\toprule
+
+%% here you include the table headers by hand
+
+& price         & weight                & mpg           & rep78 \\
+
+\midrule
+
+\input{table_example.tex} % include table file
+
+\bottomrule 
+
+\end{tabular}%
+
+\end{table}%
+
+
+Example of latex command if used with group titles: 
+
+\newcommand{\rowgroupit}[1]{\hspace{-1em}\emph{#1} \rule{0pt}{3ex} }
+
 ]
 
 author[Marcelo Rainho Avila]
@@ -77,10 +127,10 @@ END HELP FILE */
 cap program drop mat2tex
 program define mat2tex
         version 10
-        syntax using/, Matrix(name) [ REPLace APPend NOTIMing COMment(str) Format(str) ROWNames(str asis) QUIetly ]
+        syntax using/, Matrix(name) [ REPLace APPend NOTIMing COMment(str) Format(str) ROWNames(str asis) GROUPtitle(str asis) QUIetly ]
 	local debug 0
-        if `debug' di 1
-        if "`format'"=="" local format "%10.0g"
+        if `debug' di 1 // i dont know if stata has a debugger... so bombing it with prints
+        if "`format'"=="" local format "%12.0g"
         local formatn: word count `format'
         local using: subinstr local using "." ".", count(local ext)
         if !`ext' local using "`using'.tex"
@@ -118,18 +168,23 @@ program define mat2tex
         }
 
         local sep =  "& " 
-        file write `myfile' "%" _tab _tab "`sep'"
+        // first row: col titles
+        file write `myfile' "%" _tab "`sep'"
         foreach colname of local colnames {
-                file write `myfile' `"`colname'"' _tab _tab "`sep'"
+                file write `myfile' `"`colname'"' _tab "`sep'"
         }
-        file write `myfile' _n
+        file write `myfile' _n // end of 1st row
+
+        if "`grouptitle'"!="" file write `myfile' `"`grouptitle'"' _n
+
+
         forvalues r=1/`nrows' {
                 local rowname: word `r' of `rownames'
-                file write `myfile' `"`rowname'"' _tab _tab "`sep'"
+                file write `myfile' `"`rowname'"' _tab "`sep'"
                 forvalues c=1/`ncols' {
                         if `c'<=`formatn' local fmt: word `c' of `format'
                         // condition so that no separator is printed on last col
-                        if `c'<`ncols' file write `myfile' `fmt' (`matrix'[`r',`c']) _tab _tab "`sep'"
+                        if `c'<`ncols' file write `myfile' `fmt' (`matrix'[`r',`c']) _tab "`sep'"
                         // print new line on last col
                         if `c'==`ncols' file write `myfile' `fmt' (`matrix'[`r',`c']) " \\" _n
                 }
