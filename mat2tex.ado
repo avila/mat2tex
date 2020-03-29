@@ -1,6 +1,8 @@
-*! 0.1 Marcelo Rainho Avila | March 2020
-*! Adapted from Michael Blasnik's (M. Blasnik & Associates, Boston, MA)
-*! and Ben Jann's (ETH Zurich) mat2txt programme.
+*! Date    : 14 Mar 2019
+*! Version : 2.08
+*! Author  : Marcelo Rainho Avila
+*! Email   : m dot rainho dot avila ɑt gmɑil.com
+*!   export a matrix as a latex table body 
 
 /* START HELP FILE
 title[a command to export a matrix as a latex table body.]
