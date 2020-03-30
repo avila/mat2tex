@@ -98,7 +98,11 @@ the origin of table body.
         adapted in LaTeX's table headers.
 {p_end}
 {phang}
-{opt group:title(str asis)}   When appending sub-tables it might be useful. Strings must be
+{opt group:title(str asis)}   When appending sub-tables it might be useful. I have no idea 
+        when I should quote or not strings in stata, but here, strings should be
+        unquoted!. Note that the user has to add "\\" to tell LaTeX to break the
+        line. I could do it autmatically, but maybe the flexibility might be 
+        used in unexpected ways... 
 {p_end}
 {phang}
 {opt qui:etly}   Do not print output onto results window.
@@ -126,7 +130,7 @@ the origin of table body.
 {pstd}
 
 {pstd}
-For more detailed and examples, plase see {browse github.com/avila/mat2tex}
+For more detailed and examples, plase see {browse www.gitgithub.com/avila/mat2tex}
 
 
 {title:References}
@@ -149,55 +153,6 @@ This help file was created with {stata help makehlp}
 
 {pstd}
         " Statistical Software Components S457483, Boston College Department of Economics, revised 15 Mar 2019. 
-
-{pstd}
-
-{pstd}
-Example of latex table:
-
-{pstd}
-\begin{table}
-
-{pstd}
-\centering
-
-{pstd}
-\caption{Example Table}
-
-{pstd}
-\begin{tabular}{ >{\quad}l rr rr }
-
-{pstd}
-\toprule
-
-{pstd}
-%% here you include the table headers by hand
-
-{pstd}
-& price         & weight                & mpg           & rep78 \\
-
-{pstd}
-\midrule
-
-{pstd}
-\input{table_example.tex} % include table file
-
-{pstd}
-\bottomrule 
-
-{pstd}
-\end{tabular}%
-
-{pstd}
-\end{table}%
-
-{pstd}
-
-{pstd}
-Example of latex command if used with group titles: 
-
-{pstd}
-\newcommand{\rowgroupit}[1
 
 
 {title:Author}

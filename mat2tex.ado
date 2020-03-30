@@ -1,11 +1,11 @@
 *! Date    : 29 Mar 2020
 *! Version : 0.0.42
 *! Author  : Marcelo Rainho Avila
-*! Email   : m dot rainho dot avila ɑt gmɑil.com
-*!   export a matrix as a latex table body 
+*! Email   : m dot rainho dot avila ɑt gmɑil dot com
+*! Exports a matrix as a latex table body 
 
 /* START HELP FILE
-title[a command to export a matrix as a latex table body.]
+title[A command to export a matrix as a latex table body.]
 
 desc[{cmd:mat2tex}  generates a latex table body from a stata matrix. Please
 note that I am still trying to get the hang of stata's hell, I mean, help file
@@ -20,9 +20,9 @@ opt[matrix()   Matrix to be exported into tex (Required). ]
 
 opt[saving()   Filename to be exported (Required). ]
 
-opt2[replace  Replaces existing filename (or writes a new, if inexistent.)]
+opt2[replace  Replaces existing file (or writes a new, if inexistent.)]
 
-opt2[append  Appends table to existing filename.]
+opt2[append  Appends table to existing file.]
 
 opt2[notiming  Do not include date and time of table creation, which is included
 by default.]
@@ -63,46 +63,12 @@ example[
 
 {stata  mat mat_to_export = r(Stat1) \ r(Stat2)}
 
-{stata  mat2tex using test.tex, matrix(mat_to_export) replace comm(data from auto dataset)}
+{stata  mat2tex using test.tex, matrix(mat_to_export) replace comment(data from auto dataset)}
 
 
-For more detailed and examples, plase see {browse github.com/avila/mat2tex}
+For more detailed and examples, plase see {browse www.gitgithub.com/avila/mat2tex}
 ]
 
-freetext[
-
-Example of latex table:
-
-\begin{table}
-
-\centering
-
-\caption{Example Table}
-
-\begin{tabular}{ >{\quad}l rr rr }
-
-\toprule
-
-%% here you include the table headers by hand
-
-& price         & weight                & mpg           & rep78 \\
-
-\midrule
-
-\input{table_example.tex} % include table file
-
-\bottomrule 
-
-\end{tabular}%
-
-\end{table}%
-
-
-Example of latex command if used with group titles: 
-
-\newcommand{\rowgroupit}[1]{\hspace{-1em}\emph{#1} \rule{0pt}{3ex} }
-
-]
 
 author[Marcelo Rainho Avila]
 institute[Student Assistent@DIW Berlin]

@@ -8,6 +8,7 @@
   - [All in one (a little) complex option](#all-in-one-a-little-complex-option)
   - [Appending group by group (a little) complex option](#appending-group-by-group-a-little-complex-option)
 - [Syntax and options](#syntax-and-options)
+- [Acknowledgements](#acknowledgements)
 
 # Motivation 
 
@@ -37,7 +38,6 @@ stripped from its surrounding, a nice comment (better would be a nice name, but
 naming things are hard) can be helpful not to link the wrong table in the right
 place, or the right table in the wrong place or the wrong table in the wrong
 place... 
-
 
 
 # Installation 
@@ -118,8 +118,8 @@ messy. But LaTeX doesn't care much for input aesthetics, only output!
 ![Table with two groups](./assets/tab_simple.png)
 
 
-Maybe you already realized that the above table is somewhat ambigous, as there 
-are two groups of variables being displayed. In these cases, either use 
+Maybe the reader already realized that the above table is somewhat ambigous, as
+there are two groups of variables being displayed. In these cases, either use
 [frmttable](http://fmwww.bc.edu/RePEc/bocode/f/frmttable.html) or other package
 or try one of the more complex possibilities as shown in the next sections.
 
@@ -132,20 +132,36 @@ tabstat price weight mpg rep78, by(foreign) stat(mean sd min max) nototal long s
 mat mat_to_export = r(Stat1) \ r(Stat2)
 mat2tex using table_example, matrix(mat_to_export) replace comm(data from auto dataset) ///
     format(%9.0fc %9.1fc %5.3fc %5.3fc) rownames(/// 
-    "\rowgroupit{Domestic} \\ mean"              ///
+    "\rowgroupemph{Domestic} \\ mean"              ///
     "sd"                                         ///
-    "min" "max"                                  ///
-    "\rowgroupit{Foreign} \\ mean"               ///
+    "min"                                        ///
+    "max"                                        ///
+    "\rowgroupemph{Foreign} \\ mean"               ///
     "sd"                                         ///
     "min"                                        ///
     "max" )
 ```
 
+which will produce a table such as: 
+
+```latex
+% 30 Mar 2020 | 03:16:15 
+% data from auto dataset
+%       & price & weight        & mpg   & rep78 & 
+\rowgroupemph{Domestic} \\ mean   &     6.072     &   3.317,1     &    19,827     &     3,021 \\
+sd      &     3.097     &     695,4     &     4,743     &     0,838 \\
+min     &     3.291     &   1.800,0     &    12,000     &     1,000 \\
+max     &    15.906     &   4.840,0     &    34,000     &     5,000 \\
+\rowgroupemph{Foreign} \\ mean    &     6.385     &   2.315,9     &    24,773     &     4,286 \\
+sd      &     2.622     &     433,0     &     6,611     &     0,717 \\
+min     &     3.748     &   1.760,0     &    14,000     &     3,000 \\
+max     &    12.990     &   3.420,0     &    41,000     &     5,000 \\
+```
 For that, you will need a table in latex such as the following. 
 
 ```latex
 % include command in preamble or before table
-\newcommand{\rowgroupit}[1]{\hspace{-1em}\emph{#1} \rule{0pt}{3ex} }
+\newcommand{\rowgroupemph}[1]{\hspace{-1em}\emph{#1} \rule{0pt}{3ex} }
 % ...
 \begin{table}
 \centering
@@ -165,7 +181,7 @@ For that, you will need a table in latex such as the following.
 
 Pay attention to the `\begin{tabular}{ >{\qquad}l rr rr }` environment
 initialization. the `>{\qquad}l` part instructs the first column of the table to
-be aligned left but with a `\qquad` spacing in each row. the \rowgroupit
+be aligned left but with a `\qquad` spacing in each row. the \rowgroupemph
 command, however, makes each group title to negatively indented by _-1em_. Adapt
 it to your liking or disliking.
 
@@ -173,30 +189,48 @@ it to your liking or disliking.
   LaTeX). 
 
 It works by including a LaTeX line break (`\\`) in the first variable of each
-group and passing the group title as argument for the `rowgroupit`command (that
-has to be added to the preample or somewhere before the table), such as
-`"\rowgroupit{Domestic} \\ mean"`. It happens to be much easier to do this than
-to put a `\hline`s at the end of the lines. 
+group and passing the group title as argument for the `\rowgroupemph` latex
+command (that has to be added to the preample or somewhere before the table),
+such as `"\rowgroupemph{Domestic} \\ mean"`.  
+
 
 ## Appending group by group (a little) complex option 
 
-
 The other option is to divide (or just not merge) stata's matrix into each group
 and append each table accordingly. This might be better suited if it is easy to
-keep the stata matrices apart from the beggining. The grouptitle function comes
+keep the stata matrices apart from the start. The grouptitle function comes
 in handy here.
-
 
 ```stata
 mat group_1 = r(Stat1)
-local gt  "\rowgroupit{Domestic}\\" // just to show that locals can be used too
+local gt  "\rowgroupemph{Domestic}\\" // just to show that locals can be used too
 mat2tex using table_example, matrix(group_1) replace  ///
     format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(`gt')
 
 mat group_2 = r(Stat2)
 mat2tex using table_example, matrix(group_2) append  notiming ///
-    format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(\rowgroupit{Foreign}\\)
+    format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(\rowgroupemph{Foreign}\\)
 ```
+
+It will produce such a table (The latex structure and the compiled PDF will be
+the same as the ones above):
+
+```
+% 30 Mar 2020 | 02:52:06 
+%       & price & weight        & mpg   & rep78 & 
+\rowgroupemph{Domestic}\\
+mean    &     6.072     &   3.317,1     &    19,827     &     3,021 \\
+sd      &     3.097     &     695,4     &     4,743     &     0,838 \\
+min     &     3.291     &   1.800,0     &    12,000     &     1,000 \\
+max     &    15.906     &   4.840,0     &    34,000     &     5,000 \\
+%       & price & weight        & mpg   & rep78 & 
+\rowgroupemph{Foreign}\\
+mean    &     6.385     &   2.315,9     &    24,773     &     4,286 \\
+sd      &     2.622     &     433,0     &     6,611     &     0,717 \\
+min     &     3.748     &   1.760,0     &    14,000     &     3,000 \\
+max     &    12.990     &   3.420,0     &    41,000     &     5,000 \\
+```
+
 
 Another option would be create multiple sub-tables in separated files and merge
 them back together in the LaTeX project via multiple `\input{}`.
@@ -232,6 +266,10 @@ origin of table body.
     the matrix. Presently, colnames are not used here and should be directly
     adapted in LaTeX's table headers.
 
-- `grouptitle(str asis)` When appending sub-tables it might be useful. Strings must
-be quietly Do not print output onto results window.
+- `grouptitle(str asis)` When appending sub-tables grouptitle might be useful.
+  Strings must be quietly Do not print output onto results window.
 
+# Acknowledgements
+
+The heavy lifting was done by the authors of the `mat2txt` package Michael
+Blasnik & Ben Jann. 

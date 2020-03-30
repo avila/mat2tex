@@ -6,7 +6,7 @@ mat2tex using table_example.tex.tex, matrix(mat_to_export) replace ///
         comm(data from auto dataset) format(%9.2fc)
 }
 
-if 0 {
+if 1 {
 mat2tex using table_example.tex, matrix(mat_to_export) replace comm(data from auto dataset) ///
     format(%9.0fc %9.1fc %9.3fc %9.3fc) rownames(   /// 
     "\rowgroupit{Domestic} \\ mean"                 ///
@@ -20,7 +20,7 @@ mat2tex using table_example.tex, matrix(mat_to_export) replace comm(data from au
 }
 
 
-if 1 {
+if 0 {
 mat group_1 = r(Stat1)
 local gt  "\rowgroupit{Domestic}\\"
 mat2tex using table_example.tex, matrix(group_1) replace  ///
