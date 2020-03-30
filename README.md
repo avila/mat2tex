@@ -1,5 +1,6 @@
+# mat2tex: a command to export a stata matrix to a body of a latex table 
 
-
+- [mat2tex: a command to export a stata matrix to a body of a latex table](#mat2tex-a-command-to-export-a-stata-matrix-to-a-body-of-a-latex-table)
 - [Motivation](#motivation)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -176,7 +177,7 @@ to put a `\hline`s at the end of the lines.
 ## Group by Group appending complex option 
 
 The other option is to divide (or just not merge) stata's matrix into each 
-gropu and append each table accordingly. the grouptitle
+group and append each table accordingly. the grouptitle
 
 ```stata
 mat group_1 = r(Stat1)
