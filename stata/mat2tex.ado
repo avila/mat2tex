@@ -1,5 +1,5 @@
 *! Date    : 03 Apr 2020
-*! Version : 0.0.43
+*! Version : .43
 *! Author  : Marcelo Rainho Avila
 *! Email   : m dot rainho dot avila ɑt gmɑil dot com
 *! Exports a matrix as a latex table body 

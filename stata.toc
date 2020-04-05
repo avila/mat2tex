@@ -4,5 +4,5 @@ v 3
 * dlines display description text
 * the first d line is the title, and the remaining ones are text
 * blank d lines display a blank line
-d Program to export a matrix as a body of a TeX table
-p mat2tex [The mat2tex.ado program for exporting matrix to TeX table body]
+d A program to export a matrix as a body of a TeX table
+p mat2tex [A program for exporting a stata matrix to a body of a TeX table]
