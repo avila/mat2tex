@@ -4,6 +4,6 @@ d tab2tex
 d Program to export a matrix as a body of a TeX table
 d Distribution-Date: 20200401
 d
-d Version 0.99
+d Version 0.42
 f stata/mat2tex.ado
 f stata/mat2tex.sthlp
