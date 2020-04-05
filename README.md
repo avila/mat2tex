@@ -1,14 +1,17 @@
-# mat2tex: a command to export a stata matrix to a body of a latex table 
 
 - [mat2tex: a command to export a stata matrix to a body of a latex table](#mat2tex-a-command-to-export-a-stata-matrix-to-a-body-of-a-latex-table)
 - [Motivation](#motivation)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Simple use case](#simple-use-case)
-  - [All in one (a little) complex option](#all-in-one-a-little-complex-option)
   - [Appending group by group (a little) complex option](#appending-group-by-group-a-little-complex-option)
+  - [All in one (a little more) complex option](#all-in-one-a-little-more-complex-option)
 - [Syntax and options](#syntax-and-options)
 - [Acknowledgements](#acknowledgements)
+
+mat2tex: a command to export a stata matrix to a body of a latex table 
+======================================================================
+
 
 # Motivation 
 
@@ -123,7 +126,65 @@ there are two groups of variables being displayed. In these cases, either use
 [frmttable](http://fmwww.bc.edu/RePEc/bocode/f/frmttable.html) or other package
 or try one of the more complex possibilities as shown in the next sections.
 
-## All in one (a little) complex option 
+
+
+## Appending group by group (a little) complex option 
+
+The other option is to divide (or just not merge) stata's matrix into each group
+and append each table accordingly. This might be better suited if it is easy to
+keep the stata matrices apart from the start. The grouptitle function comes
+in handy here.
+
+```stata
+mat group_1 = r(Stat1)
+local gt  "\rowgroupemph{Domestic}\\" // just to show that locals can be used too
+mat2tex using table_example, matrix(group_1) replace  ///
+    format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(`gt')
+
+mat group_2 = r(Stat2)
+mat2tex using table_example, matrix(group_2) append  notiming ///
+    format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(\rowgroupemph{Foreign}\\)
+```
+For that, you will need a table in latex such as the following. 
+
+```
+% 30 Mar 2020 | 20:59:06 
+%       & price & weight        & mpg   & rep78 & 
+\rowgroupit{Domestic}\\
+mean    &     6.072     &   3.317,1     &      19,8     &     3,021 \\
+sd      &     3.097     &     695,4     &       4,7     &     0,838 \\
+min     &     3.291     &   1.800,0     &      12,0     &     1,000 \\
+max     &    15.906     &   4.840,0     &      34,0     &     5,000 \\
+%       & price & weight        & mpg   & rep78 & 
+\rowgroupit{Foreign}\\
+mean    &     6.385     &   2.315,9     &      24,8     &     4,286 \\
+sd      &     2.622     &     433,0     &       6,6     &     0,717 \\
+min     &     3.748     &   1.760,0     &      14,0     &     3,000 \\
+max     &    12.990     &   3.420,0     &      41,0     &     5,000 \\
+```
+
+```latex
+% include command in preamble or before table
+\newcommand{\rowgroupemph}[1]{\hspace{-1em}\emph{#1} \rule{0pt}{3ex} }
+% ...
+\begin{table}
+\centering
+    \caption{Example Table}
+    \begin{tabular}{ >{\quad}l rr rr }
+    \toprule
+    %% here you include the table headers by hand
+    & price         & weight                & mpg           & rep78 \\
+    \midrule
+    \input{table_example.tex} % include table file
+    \bottomrule 
+    \end{tabular}%
+\end{table}%
+```
+
+![Table with two groups](./assets/tab_two_groups.png)
+
+
+## All in one (a little more) complex option 
 
 ```stata
 sysuse auto
@@ -157,25 +218,10 @@ sd      &     2.622     &     433,0     &     6,611     &     0,717 \\
 min     &     3.748     &   1.760,0     &    14,000     &     3,000 \\
 max     &    12.990     &   3.420,0     &    41,000     &     5,000 \\
 ```
-For that, you will need a table in latex such as the following. 
 
-```latex
-% include command in preamble or before table
-\newcommand{\rowgroupemph}[1]{\hspace{-1em}\emph{#1} \rule{0pt}{3ex} }
-% ...
-\begin{table}
-\centering
-    \caption{Example Table}
-    \begin{tabular}{ >{\quad}l rr rr }
-    \toprule
-    %% here you include the table headers by hand
-    & price         & weight                & mpg           & rep78 \\
-    \midrule
-    \input{table_example.tex} % include table file
-    \bottomrule 
-    \end{tabular}%
-\end{table}%
-```
+
+It will produce such a table (The latex structure and the compiled PDF will be
+the same as the ones above):
 
 ![Table with two groups](./assets/tab_two_groups.png)
 
@@ -193,44 +239,9 @@ group and passing the group title as argument for the `\rowgroupemph` latex
 command (that has to be added to the preample or somewhere before the table),
 such as `"\rowgroupemph{Domestic} \\ mean"`.  
 
-
-## Appending group by group (a little) complex option 
-
-The other option is to divide (or just not merge) stata's matrix into each group
-and append each table accordingly. This might be better suited if it is easy to
-keep the stata matrices apart from the start. The grouptitle function comes
-in handy here.
-
-```stata
-mat group_1 = r(Stat1)
-local gt  "\rowgroupemph{Domestic}\\" // just to show that locals can be used too
-mat2tex using table_example, matrix(group_1) replace  ///
-    format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(`gt')
-
-mat group_2 = r(Stat2)
-mat2tex using table_example, matrix(group_2) append  notiming ///
-    format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(\rowgroupemph{Foreign}\\)
-```
-
-It will produce such a table (The latex structure and the compiled PDF will be
-the same as the ones above):
-
-```
-% 30 Mar 2020 | 02:52:06 
-%       & price & weight        & mpg   & rep78 & 
-\rowgroupemph{Domestic}\\
-mean    &     6.072     &   3.317,1     &    19,827     &     3,021 \\
-sd      &     3.097     &     695,4     &     4,743     &     0,838 \\
-min     &     3.291     &   1.800,0     &    12,000     &     1,000 \\
-max     &    15.906     &   4.840,0     &    34,000     &     5,000 \\
-%       & price & weight        & mpg   & rep78 & 
-\rowgroupemph{Foreign}\\
-mean    &     6.385     &   2.315,9     &    24,773     &     4,286 \\
-sd      &     2.622     &     433,0     &     6,611     &     0,717 \\
-min     &     3.748     &   1.760,0     &    14,000     &     3,000 \\
-max     &    12.990     &   3.420,0     &    41,000     &     5,000 \\
-```
-
+This explanation is mainly here to show that with a little tinkering, one can
+still produce slightly more complex tables with `mat2tex`. Bud just because you
+can, does not mean you should! 
 
 Another option would be create multiple sub-tables in separated files and merge
 them back together in the LaTeX project via multiple `\input{}`.
@@ -243,7 +254,9 @@ them back together in the LaTeX project via multiple `\input{}`.
 
 - `replace` Replaces existing filename (or writes a new, if inexistent).
 
-- `append` Appends table to existing filename.
+- `append` Appends table to existing filename. This can be useful when creating
+  a single table from multiple matrices. `grouptitle` option can be useful to
+  create a group separation within the table body.
 
 - `notiming` Do not include date and time of table creation, which is included by
 default.

@@ -2,6 +2,6 @@
 v 3
 d tab2tex
 d Program to export a matrix as a body of a TeX table
-d Distribution-Date: 20200301
+d Distribution-Date: 20200401
 f mat2tex.ado
 f mat2tex.sthlp

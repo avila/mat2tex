@@ -6,9 +6,9 @@ mat2tex using table_example.tex.tex, matrix(mat_to_export) replace ///
         comm(data from auto dataset) format(%9.2fc)
 }
 
-if 1 {
+if 0 {
 mat2tex using table_example.tex, matrix(mat_to_export) replace comm(data from auto dataset) ///
-    format(%9.0fc %9.1fc %9.3fc %9.3fc) rownames(   /// 
+    format(%9.0fc %9.1fc %9.1fc %9.3fc) rownames(   /// 
     "\rowgroupit{Domestic} \\ mean"                 ///
     "sd"                                            ///
     "min"                                           ///
@@ -20,13 +20,13 @@ mat2tex using table_example.tex, matrix(mat_to_export) replace comm(data from au
 }
 
 
-if 0 {
+if 1 {
 mat group_1 = r(Stat1)
 local gt  "\rowgroupit{Domestic}\\"
 mat2tex using table_example.tex, matrix(group_1) replace  ///
-    format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(`gt')
+    format(%9.0fc %9.1fc %9.1fc %9.3fc) grouptitle(`gt')
 
 mat group_2 = r(Stat2)
 mat2tex using table_example.tex, matrix(group_2) append  notiming ///
-    format(%9.0fc %9.1fc %9.3fc %9.3fc) grouptitle(\rowgroupit{Foreign}\\)
+    format(%9.0fc %9.1fc %9.1fc %9.3fc) grouptitle(\rowgroupit{Foreign}\\)
 }
