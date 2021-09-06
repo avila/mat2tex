@@ -266,10 +266,10 @@ origin of table body.
 
 - `format(str)` Format of each column of matrix (Default: "%12.0g").  If only one
     included it is applied to all columns, otherwise it is applied in a 1 by 1
-    manner. See help format for more information on formating options. If less
+    manner. See `help format` for more information on formating options. If less
     format arguments are passed than number of columns of matrix, I believe
     stata is crazy enough to cycle through the rest of the columns matrix with
-    last format given by the user ¯\_(ツ)_/¯.  mat2tex won't check mathing
+    last format given by the user ¯\_(ツ)_/¯.  mat2tex won't check matching
     lengths in formating arguments and matrix columns. The format options is not
     applied to the rownames (first column)
 
